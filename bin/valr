@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require 'valr'
+
+repo_path = ARGV[0] || Dir.pwd
+
+changelog = Valr.new.changelog repo_path
+puts changelog
