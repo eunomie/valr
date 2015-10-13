@@ -5,4 +5,7 @@ require 'valr'
 repo_path = ARGV[0] || Dir.pwd
 
 changelog = Valr.new.changelog repo_path
+
+puts "Changelog for #{repo_path}"
+puts ""
 puts changelog
