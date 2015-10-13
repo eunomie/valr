@@ -1,9 +1,11 @@
+require 'rugged'
+
 class Valr
   # Get the changelog based on commit messages.
-  # @param [Array<String>] messages Git commit messages
+  # @param [String] repo_path Path of repository
   # @return [String] changelog
-  def changelog(messages)
-    to_list(first_lines(messages.reverse))
+  def changelog(repo_path)
+    to_list(first_lines(log_messages(repo_path)))
   end
 
   private
@@ -22,5 +24,17 @@ class Valr
     strings.map {|string|
       string.split("\n").first
     }
+  end
+
+  # Get log messages for a repository
+  # @param [String] repo_path Path of git repository
+  # @return [Array<String>] log messages
+  def log_messages(repo_path)
+    repo = Rugged::Repository.new repo_path
+    walker = Rugged::Walker.new repo
+    walker.push repo.head.target_id
+    messages = walker.inject([]) { |messages, c| messages << c.message }
+    walker.reset
+    messages
   end
 end
