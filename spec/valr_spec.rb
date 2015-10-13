@@ -3,7 +3,7 @@ require 'valr'
 describe Valr do
   describe '#changelog' do
     let(:repo_path) {
-      @repo_path = 'fixtures/simple_repo.git'
+      @repo_path = File.join File.dirname(__FILE__), '..', 'fixtures/simple_repo.git'
     }
     context 'without any specific formating' do
       it 'returns the first line of commit messages in markdown list' do
