@@ -1,4 +1,5 @@
 require 'rugged'
+require 'valr/repository_error'
 
 module Valr
   class Repo
@@ -6,7 +7,11 @@ module Valr
     # @param [String] repo_path Path of git repository
     def initialize(repo_path)
       @repo_path = repo_path
-      @repo = Rugged::Repository.new @repo_path
+      begin
+        @repo = Rugged::Repository.new @repo_path
+      rescue Rugged::RepositoryError => e
+        raise Valr::RepositoryError.new @repo_path
+      end
     end
 
     # Get the changelog based on commit messages.

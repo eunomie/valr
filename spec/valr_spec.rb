@@ -12,7 +12,7 @@ describe Valr do
       end
 
       it 'raise an error' do
-        expect{Valr::Repo.new repo_path}.to raise_error
+        expect{Valr::Repo.new repo_path}.to raise_error Valr::RepositoryError, "'#{repo_path}' is not a git repository"
       end
     end
   end
