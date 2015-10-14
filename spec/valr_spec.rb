@@ -1,15 +1,15 @@
 require 'valr'
 
 describe Valr do
-  before(:each) do
-    create_simple_fixtures
-  end
-
   after(:each) do
     clear_fixtures
   end
 
   describe '#changelog' do
+    before(:each) do
+      create_simple_fixtures
+    end
+
     context 'without any specific formating' do
       it 'returns the first line of commit messages in markdown list' do
         valr = Valr.new repo_path
@@ -19,6 +19,10 @@ describe Valr do
   end
 
   describe '#full_changelog' do
+    before(:each) do
+      create_simple_fixtures
+    end
+
     context 'without any specific formating' do
       it 'returns the sha1 of the commit as a context of the changelog' do
         valr = Valr.new repo_path
