@@ -13,6 +13,12 @@ module GitHelpers
     create_commit repo, "3rd commit\n\nplop plop"
   end
 
+  def clear_fixtures
+    FileUtils.rm_rf repo_path
+  end
+
+  private
+
   # @param [String] rev
   # @return [Rugged::Index]
   def get_index(repo, rev = nil)
@@ -53,9 +59,5 @@ module GitHelpers
     options[:update_ref] = 'HEAD'
 
     Rugged::Commit.create repo, options
-  end
-
-  def clear_fixtures
-    FileUtils.rm_rf repo_path
   end
 end
