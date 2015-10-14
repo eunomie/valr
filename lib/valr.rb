@@ -5,6 +5,7 @@ class Valr
   # @param [String] repo_path Path of git repository
   def initialize(repo_path)
     @repo_path = repo_path
+    @repo = Rugged::Repository.new @repo_path
   end
 
   # Get the changelog based on commit messages.
@@ -42,9 +43,8 @@ class Valr
   # Get log messages for a repository
   # @return [Array<String>] log messages
   def log_messages
-    repo = Rugged::Repository.new @repo_path
-    walker = Rugged::Walker.new repo
-    walker.push repo.head.target_id
+    walker = Rugged::Walker.new @repo
+    walker.push @repo.head.target_id
     messages = walker.inject([]) { |messages, c| messages << c.message }
     walker.reset
     messages
@@ -52,7 +52,6 @@ class Valr
 
   # Get the last sha1 of a git repository
   def last_sha1
-    repo = Rugged::Repository.new @repo_path
-    repo.head.target_id
+    @repo.head.target_id
   end
 end
