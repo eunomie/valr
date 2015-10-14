@@ -12,7 +12,9 @@ class Valr
   # @param [String] repo_path Path of repository
   # @return [String] changelog
   def full_changelog(repo_path)
-    "#{last_sha1(repo_path)}\n\n#{changelog(repo_path)}"
+    %{#{last_sha1(repo_path)}
+
+#{changelog(repo_path)}}
   end
 
   private
