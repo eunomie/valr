@@ -17,4 +17,18 @@ describe Valr do
       end
     end
   end
+
+  describe '#full_changelog' do
+    context 'without any specific formating' do
+      it 'returns the sha1 of the commit as a context of the changelog' do
+        valr = Valr.new
+        expect(valr.full_changelog(repo_path).lines.first.chomp).to match /^[0-9a-f]{40}$/
+      end
+
+      it 'returns a blank line and the commits in a markdown list after the metadata' do
+        valr = Valr.new
+        expect(valr.full_changelog(repo_path).lines[1..-1].join).to eq "\n- 3rd commit\n- 2nd commit\n- first commit"
+      end
+    end
+  end
 end
