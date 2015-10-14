@@ -8,6 +8,13 @@ class Valr
     to_list(first_lines(log_messages(repo_path)))
   end
 
+  # Get the full changelog including metadata.
+  # @param [String] repo_path Path of repository
+  # @return [String] changelog
+  def full_changelog(repo_path)
+    "#{last_sha1(repo_path)}\n\n#{changelog(repo_path)}"
+  end
+
   private
 
   # Array to markdown list
@@ -36,5 +43,11 @@ class Valr
     messages = walker.inject([]) { |messages, c| messages << c.message }
     walker.reset
     messages
+  end
+
+  # Get the last sha1 of a git repository
+  def last_sha1(repo_path)
+    repo = Rugged::Repository.new repo_path
+    repo.head.target_id
   end
 end
