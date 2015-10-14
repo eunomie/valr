@@ -1,20 +1,25 @@
 require 'rugged'
 
 class Valr
+  # Initialize new Valr for a git repository
+  # @param [String] repo_path Path of git repository
+  def initialize(repo_path)
+    @repo_path = repo_path
+    @repo = Rugged::Repository.new @repo_path
+  end
+
   # Get the changelog based on commit messages.
-  # @param [String] repo_path Path of repository
   # @return [String] changelog
-  def changelog(repo_path)
-    to_list(first_lines(log_messages(repo_path)))
+  def changelog
+    to_list(first_lines(log_messages))
   end
 
   # Get the full changelog including metadata.
-  # @param [String] repo_path Path of repository
   # @return [String] changelog
-  def full_changelog(repo_path)
-    %{#{last_sha1(repo_path)}
+  def full_changelog
+    %{#{last_sha1}
 
-#{changelog(repo_path)}}
+#{changelog}}
   end
 
   private
@@ -36,20 +41,17 @@ class Valr
   end
 
   # Get log messages for a repository
-  # @param [String] repo_path Path of git repository
   # @return [Array<String>] log messages
-  def log_messages(repo_path)
-    repo = Rugged::Repository.new repo_path
-    walker = Rugged::Walker.new repo
-    walker.push repo.head.target_id
+  def log_messages
+    walker = Rugged::Walker.new @repo
+    walker.push @repo.head.target_id
     messages = walker.inject([]) { |messages, c| messages << c.message }
     walker.reset
     messages
   end
 
   # Get the last sha1 of a git repository
-  def last_sha1(repo_path)
-    repo = Rugged::Repository.new repo_path
-    repo.head.target_id
+  def last_sha1
+    @repo.head.target_id
   end
 end
