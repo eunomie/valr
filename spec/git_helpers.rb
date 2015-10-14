@@ -13,6 +13,10 @@ module GitHelpers
     create_commit repo, "3rd commit\n\nplop plop"
   end
 
+  def create_non_repository
+    FileUtils.mkdir_p repo_path
+  end
+
   def clear_fixtures
     FileUtils.rm_rf repo_path
   end

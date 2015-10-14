@@ -5,6 +5,18 @@ describe Valr do
     clear_fixtures
   end
 
+  describe '#new' do
+    context 'without a git repository' do
+      before(:each) do
+        create_non_repository
+      end
+
+      it 'raise an error' do
+        expect{Valr.new repo_path}.to raise_error
+      end
+    end
+  end
+
   describe '#changelog' do
     before(:each) do
       create_simple_fixtures
