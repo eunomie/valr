@@ -1,5 +1,6 @@
 require 'rugged'
 require 'valr/repository_error'
+require 'valr/empty_repository_error'
 
 module Valr
   class Repo
@@ -12,6 +13,7 @@ module Valr
       rescue Rugged::RepositoryError => e
         raise Valr::RepositoryError.new @repo_path
       end
+      raise Valr::EmptyRepositoryError.new @repo_path if @repo.empty?
     end
 
     # Get the changelog based on commit messages.

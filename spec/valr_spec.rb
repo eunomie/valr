@@ -15,6 +15,16 @@ describe Valr do
         expect{Valr::Repo.new repo_path}.to raise_error Valr::RepositoryError, "'#{repo_path}' is not a git repository"
       end
     end
+
+    context 'with an empty repository' do
+      before(:each) do
+        create_empty_repository
+      end
+
+      it 'raise an error' do
+        expect{Valr::Repo.new repo_path}.to raise_error Valr::EmptyRepositoryError, "'#{repo_path}' is empty"
+      end
+    end
   end
 
   describe '#changelog' do
