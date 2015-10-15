@@ -17,6 +17,15 @@ module GitHelpers
     Rugged::Repository.init_at repo_path
   end
 
+  def create_repo_from(name)
+    FileUtils.cp_r File.join('fixtures', name, '.'), repo_path
+    Dir.chdir(repo_path) do
+      File.rename('.gitted', '.git') if File.exist?('.gitted')
+      File.rename('gitattributes', '.gitattributes') if File.exist?('gitattributes')
+      File.rename('gitignore', '.gitignore') if File.exist?('gitignore')
+    end
+  end
+
   def create_non_repository
     FileUtils.mkdir_p repo_path
   end
