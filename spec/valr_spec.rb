@@ -46,9 +46,18 @@ describe Valr do
         create_repo_from 'with_branch'
       end
 
-      it 'returns first line of commit messages' do
-        valr = Valr::Repo.new repo_path
-        expect(valr.changelog).to eq "- merge commit\n- feature commit 2\n- feature commit 1\n- first commit"
+      context 'when asked for all commits' do
+        it 'returns first line of commit messages' do
+          valr = Valr::Repo.new repo_path
+          expect(valr.changelog).to eq "- merge commit\n- feature commit 2\n- feature commit 1\n- first commit"
+        end
+      end
+
+      context 'when asked for first parent commits' do
+        it 'returns only messages for commits in the branch' do
+          valr = Valr::Repo.new repo_path
+          expect(valr.changelog first_parent: true).to eq "- merge commit\n- first commit"
+        end
       end
     end
   end
