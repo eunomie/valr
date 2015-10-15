@@ -28,14 +28,27 @@ describe Valr do
   end
 
   describe '#changelog' do
-    before(:each) do
-      create_simple_fixtures
+    context 'with linear histo' do
+      before(:each) do
+        create_simple_fixtures
+      end
+
+      context 'without any specific formating' do
+        it 'returns the first line of commit messages in markdown list' do
+          valr = Valr::Repo.new repo_path
+          expect(valr.changelog).to eq "- 3rd commit\n- 2nd commit\n- first commit"
+        end
+      end
     end
 
-    context 'without any specific formating' do
-      it 'returns the first line of commit messages in markdown list' do
+    context 'with branches and merge' do
+      before(:each) do
+        create_repo_from 'with_branch'
+      end
+
+      it 'returns first line of commit messages' do
         valr = Valr::Repo.new repo_path
-        expect(valr.changelog).to eq "- 3rd commit\n- 2nd commit\n- first commit"
+        expect(valr.changelog).to eq "- merge commit\n- feature commit 2\n- feature commit 1\n- first commit"
       end
     end
   end
