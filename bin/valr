@@ -4,7 +4,7 @@ require 'valr'
 
 repo_path = ARGV[0] || Dir.pwd
 
-changelog = Valr::Repo.new(repo_path).full_changelog
+changelog = Valr::Repo.new(repo_path).full_changelog first_parent: true
 
 puts "Changelog for #{repo_path}"
 puts ""
