@@ -17,17 +17,19 @@ module Valr
     end
 
     # Get the changelog based on commit messages.
+    # @param [Boolean] first_parent Optional, if true limits to first parent commits
     # @return [String] changelog
-    def changelog
-      to_list(first_lines(log_messages))
+    def changelog(first_parent: false)
+      to_list(first_lines(log_messages first_parent))
     end
 
     # Get the full changelog including metadata.
+    # @param [Boolean] first_parent Optional, if true limits to first parent commits
     # @return [String] changelog
-    def full_changelog
+    def full_changelog(first_parent: false)
       %{#{last_sha1}
 
-#{changelog}}
+#{changelog(first_parent: first_parent)}}
     end
 
     private
@@ -49,10 +51,12 @@ module Valr
     end
 
     # Get log messages for a repository
+    # @param [Boolean] first_parent Optional, if true limit to first parent commits
     # @return [Array<String>] log messages
-    def log_messages
+    def log_messages(first_parent = false)
       walker = Rugged::Walker.new @repo
       walker.push @repo.head.target_id
+      walker.simplify_first_parent if first_parent
       messages = walker.inject([]) { |messages, c| messages << c.message }
       walker.reset
       messages
