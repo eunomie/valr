@@ -24,11 +24,12 @@ module Valr
     end
 
     # Get the full changelog including metadata.
+    # @param [Boolean] first_parent Optional, if true limits to first parent commits
     # @return [String] changelog
-    def full_changelog
+    def full_changelog(first_parent: false)
       %{#{last_sha1}
 
-#{changelog}}
+#{changelog(first_parent: first_parent)}}
     end
 
     private
