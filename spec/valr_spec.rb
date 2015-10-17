@@ -57,14 +57,14 @@ describe Valr do
       context 'when asked for all commits' do
         it 'returns first line of each commit messages in a markdown list' do
           valr = Valr::Repo.new repo_path
-          expect(valr.changelog).to eq "- merge commit\n- feature commit 2\n- feature commit 1\n- first commit"
+          expect(valr.changelog).to eq "- commit\n- merge commit\n- feature commit 2\n- feature commit 1\n- first commit"
         end
       end
 
       context 'when asked for first parent commits' do
         it 'returns only messages for commits written in the branch' do
           valr = Valr::Repo.new repo_path
-          expect(valr.changelog first_parent: true).to eq "- merge commit\n- first commit"
+          expect(valr.changelog first_parent: true).to eq "- commit\n- merge commit\n- first commit"
         end
       end
     end
