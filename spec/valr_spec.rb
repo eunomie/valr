@@ -74,9 +74,9 @@ describe Valr do
           expect(valr.full_changelog.lines.first.chomp).to match /^[0-9a-f]{40}$/
         end
 
-        it 'returns a blank line and the commits in a markdown list after the metadata' do
+        it 'returns a blank line and the changlog after the metadata' do
           valr = Valr::Repo.new repo_path
-          expect(valr.full_changelog.lines[1..-1].join).to eq "\n- 3rd commit\n- 2nd commit\n- first commit"
+          expect(valr.full_changelog.lines[1..-1].join).to eq "\n#{valr.changelog}"
         end
       end
     end
@@ -92,9 +92,9 @@ describe Valr do
           expect(valr.full_changelog.lines.first.chomp).to match /^[0-9a-f]{40}$/
         end
 
-        it 'returns a blank line and the commits in a markdown list after the metadata' do
+        it 'returns a blank line and the changelog after the metadata' do
           valr = Valr::Repo.new repo_path
-          expect(valr.full_changelog.lines[1..-1].join).to eq "\n- merge commit\n- feature commit 2\n- feature commit 1\n- first commit"
+          expect(valr.full_changelog.lines[1..-1].join).to eq "\n#{valr.changelog}"
         end
       end
 
@@ -104,9 +104,9 @@ describe Valr do
           expect(valr.full_changelog(first_parent: true).lines.first.chomp).to match /^[0-9a-f]{40}$/
         end
 
-        it 'returns a blank line and the commits in a markdown list after the metadata' do
+        it 'returns a blank line and the changelog after the metadata' do
           valr = Valr::Repo.new repo_path
-          expect(valr.full_changelog(first_parent: true).lines[1..-1].join).to eq "\n- merge commit\n- first commit"
+          expect(valr.full_changelog(first_parent: true).lines[1..-1].join).to eq "\n#{valr.changelog first_parent: true}"
         end
       end
     end
