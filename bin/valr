@@ -3,8 +3,9 @@
 require 'valr'
 
 repo_path = ARGV[0] || Dir.pwd
+range = ARGV[1] || nil
 
-changelog = Valr::Repo.new(repo_path).full_changelog first_parent: true
+changelog = Valr::Repo.new(repo_path).full_changelog first_parent: true, range: range
 
 puts "Changelog for #{repo_path}"
 puts ""
