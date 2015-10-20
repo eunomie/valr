@@ -27,11 +27,14 @@ module Valr
 
     # Get the full changelog including metadata.
     # @param [Boolean] first_parent Optional, if true limits to first parent commits
+    # @param [String] range Optional, define a specific range of commits
     # @return [String] changelog
-    def full_changelog(first_parent: false)
-      %{#{last_sha1}
-
-#{changelog(first_parent: first_parent)}}
+    def full_changelog(first_parent: false, range: nil)
+      if range.nil?
+        full_changelog_no_range first_parent
+      else
+        full_changelog_range first_parent, range
+      end
     end
 
     private
@@ -73,9 +76,39 @@ module Valr
       messages
     end
 
+    # Get the full changelog including metadata.
+    # @param [Boolean] first_parent If true limits to first parent commits
+    # @return [String] changelog
+    def full_changelog_no_range(first_parent)
+      %{#{last_sha1}
+
+#{changelog(first_parent: first_parent)}}
+    end
+
+    # Get the full changelog including metadata.
+    # @param [Boolean] first_parent If true limits to first parent commits
+    # @param [String] range Define a specific range of commits
+    # @return [String] changelog
+    def full_changelog_range(first_parent, range)
+      changelog_list = changelog first_parent: first_parent, range: range
+      from, to = range.split '..'
+      from_commit, to_commit = [from, to].map { |ref| rev_parse ref }
+      %{    from: #{from} <#{from_commit.oid}>
+    to:   #{to} <#{to_commit.oid}>
+
+#{changelog_list}}
+    end
+
     # Get the last sha1 of a git repository
     def last_sha1
       @repo.head.target_id
+    end
+
+    # Get the commit of a reference (tag or other)
+    # @param [String] ref Reference to get the commit
+    # @return the commit
+    def rev_parse(ref)
+      Rugged::Object.rev_parse @repo, ref
     end
   end
 end

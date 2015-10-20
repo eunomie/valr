@@ -99,23 +99,7 @@ describe Valr do
         create_simple_fixtures
       end
 
-      it 'returns the sha1 of the commit as a context of the changelog' do
-        valr = Valr::Repo.new repo_path
-        expect(valr.full_changelog.lines.first.chomp).to match /^[0-9a-f]{40}$/
-      end
-
-      it 'returns a blank line followed by the changlog after the metadata' do
-        valr = Valr::Repo.new repo_path
-        expect(valr.full_changelog.lines[1..-1].join).to eq "\n#{valr.changelog}"
-      end
-    end
-
-    context 'with a git history containing branches and merge' do
-      before(:each) do
-        create_repo_from 'with_branch'
-      end
-
-      context 'when asked for all commits' do
+      context 'without range' do
         it 'returns the sha1 of the commit as a context of the changelog' do
           valr = Valr::Repo.new repo_path
           expect(valr.full_changelog.lines.first.chomp).to match /^[0-9a-f]{40}$/
@@ -127,15 +111,78 @@ describe Valr do
         end
       end
 
-      context 'when asked for first parent commits' do
-        it 'returns the sha1 of the commit as a context of the changelog' do
+      context 'with a range' do
+        it 'returns an error if range is not valid' do
           valr = Valr::Repo.new repo_path
-          expect(valr.full_changelog(first_parent: true).lines.first.chomp).to match /^[0-9a-f]{40}$/
+          expect{valr.full_changelog range: 'Plop..Bla'}.to raise_error Valr::NotValidRangeError, "'Plop..Bla' is not a valid range"
+        end
+
+        it 'returns metadata containg the range and the corresponding oids' do
+          valr = Valr::Repo.new repo_path
+          from = 'HEAD~2'
+          to = 'HEAD'
+          full_changelog = valr.full_changelog range: "#{from}..#{to}"
+          r_from = /^    from: #{Regexp.escape from} <[0-9a-f]{40}>\n/
+          r_to   = /^    to:   #{Regexp.escape to  } <[0-9a-f]{40}>\n/
+          expect(full_changelog.lines[0]).to match r_from
+          expect(full_changelog.lines[1]).to match r_to
         end
 
         it 'returns a blank line followed by the changlog after the metadata' do
           valr = Valr::Repo.new repo_path
-          expect(valr.full_changelog(first_parent: true).lines[1..-1].join).to eq "\n#{valr.changelog first_parent: true}"
+          range = 'HEAD~2..HEAD'
+          expect(valr.full_changelog(range: range).lines[2..-1].join).to eq "\n#{valr.changelog(range: range)}"
+        end
+      end
+    end
+
+    context 'with a git history containing branches and merge' do
+      before(:each) do
+        create_repo_from 'with_branch'
+      end
+
+      context 'without a range' do
+        context 'when asked for all commits' do
+          it 'returns the sha1 of the commit as a context of the changelog' do
+            valr = Valr::Repo.new repo_path
+            expect(valr.full_changelog.lines.first.chomp).to match /^[0-9a-f]{40}$/
+          end
+
+          it 'returns a blank line followed by the changlog after the metadata' do
+            valr = Valr::Repo.new repo_path
+            expect(valr.full_changelog.lines[1..-1].join).to eq "\n#{valr.changelog}"
+          end
+        end
+
+        context 'when asked for first parent commits' do
+          it 'returns the sha1 of the commit as a context of the changelog' do
+            valr = Valr::Repo.new repo_path
+            expect(valr.full_changelog(first_parent: true).lines.first.chomp).to match /^[0-9a-f]{40}$/
+          end
+
+          it 'returns a blank line followed by the changlog after the metadata' do
+            valr = Valr::Repo.new repo_path
+            expect(valr.full_changelog(first_parent: true).lines[1..-1].join).to eq "\n#{valr.changelog first_parent: true}"
+          end
+        end
+      end
+
+      context 'with a range' do
+        it 'returns metadata containg the range and the corresponding oids' do
+          valr = Valr::Repo.new repo_path
+          from = 'HEAD~2'
+          to = 'HEAD'
+          full_changelog = valr.full_changelog range: "#{from}..#{to}"
+          r_from = /^    from: #{Regexp.escape from} <[0-9a-f]{40}>\n/
+          r_to   = /^    to:   #{Regexp.escape to  } <[0-9a-f]{40}>\n/
+          expect(full_changelog.lines[0]).to match r_from
+          expect(full_changelog.lines[1]).to match r_to
+        end
+
+        it 'returns a blank line followed by the changlog after the metadata' do
+          valr = Valr::Repo.new repo_path
+          range = 'HEAD^^..HEAD'
+          expect(valr.full_changelog(range: range).lines[2..-1].join).to eq "\n#{valr.changelog range: range}"
         end
       end
     end
