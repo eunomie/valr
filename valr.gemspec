@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
 	s.name = 'valr'
 	s.version = '0.1.0'
-	s.date = '2015-10-07'
+	s.date = '2015-10-20'
 	s.summary = 'Changelog generator'
 	s.description = 'A markdown powered CHANGELOG generator using git commit messages.'
 	s.authors = ['Yves Brissaud']
