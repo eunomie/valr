@@ -70,8 +70,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  guard
-  guard-rspec
-  rspec
-  simplecov
+  guard (~> 2.13, >= 2.13.0)
+  guard-rspec (~> 4.6, >= 4.6.4)
+  rspec (~> 3.3, >= 3.3.0)
+  simplecov (~> 0.10, >= 0.10.0)
   valr!

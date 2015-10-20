@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
 	s.homepage = 'https://github.com/eunomie/valr'
 	s.license = 'MIT'
 
-	s.add_development_dependency 'rspec'
-  s.add_development_dependency 'guard'
-  s.add_development_dependency 'guard-rspec'
-  s.add_development_dependency 'simplecov'
+	s.add_development_dependency 'rspec', '~> 3.3', '>= 3.3.0'
+  s.add_development_dependency 'guard', '~> 2.13', '>= 2.13.0'
+  s.add_development_dependency 'guard-rspec', '~> 4.6', '>= 4.6.4'
+  s.add_development_dependency 'simplecov', '~> 0.10', '>= 0.10.0'
   s.add_dependency 'rugged', '~> 0.23.2'
 end
