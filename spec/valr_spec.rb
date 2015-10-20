@@ -47,6 +47,18 @@ describe Valr do
         valr = Valr::Repo.new repo_path
         expect(valr.changelog).to eq "- 3rd commit\n- 2nd commit\n- first commit"
       end
+
+      context 'when asked for a commit range' do
+        it 'returns only the messages of commits in the range' do
+          valr = Valr::Repo.new repo_path
+          expect(valr.changelog range: 'HEAD~2..HEAD').to eq ["- 3rd commit", "- 2nd commit"].join "\n"
+        end
+
+        it 'returns an error if range is not valid' do
+          valr = Valr::Repo.new repo_path
+          expect{valr.changelog range: 'Plop..Bla'}.to raise_error Valr::NotValidRangeError, "'Plop..Bla' is not a valid range"
+        end
+      end
     end
 
     context 'with a git history containing branches and merge' do
@@ -59,12 +71,23 @@ describe Valr do
           valr = Valr::Repo.new repo_path
           expect(valr.changelog).to eq "- commit\n- merge commit\n- feature commit 2\n- feature commit 1\n- first commit"
         end
+
+        it 'returns first line of each commit messages including in the range' do
+          valr = Valr::Repo.new repo_path
+          expect(valr.changelog range: 'c85250a..HEAD').to eq "- commit\n- merge commit\n- feature commit 2\n- feature commit 1"
+        end
       end
 
       context 'when asked for first parent commits' do
         it 'returns only messages for commits written in the branch' do
           valr = Valr::Repo.new repo_path
           expect(valr.changelog first_parent: true).to eq "- commit\n- merge commit\n- first commit"
+        end
+
+        it 'returns only messages for commits written in the branch and in the range' do
+          valr = Valr::Repo.new repo_path
+          expect(valr.changelog first_parent: true, range: 'HEAD^^..HEAD').to eq ['- commit', '- merge commit'].join "\n"
+          expect(valr.changelog first_parent: true, range: 'HEAD~1..HEAD').to eq '- commit'
         end
       end
     end

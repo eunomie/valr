@@ -1,6 +1,7 @@
 require 'rugged'
 require 'valr/repository_error'
 require 'valr/empty_repository_error'
+require 'valr/not_valid_range_error'
 
 module Valr
   class Repo
@@ -18,9 +19,10 @@ module Valr
 
     # Get the changelog based on commit messages.
     # @param [Boolean] first_parent Optional, if true limits to first parent commits
+    # @param [String] range Optional, define a specific range of commits
     # @return [String] changelog
-    def changelog(first_parent: false)
-      to_list(first_lines(log_messages first_parent))
+    def changelog(first_parent: false, range: nil)
+      to_list(first_lines(log_messages first_parent, range))
     end
 
     # Get the full changelog including metadata.
@@ -52,10 +54,19 @@ module Valr
 
     # Get log messages for a repository
     # @param [Boolean] first_parent Optional, if true limit to first parent commits
+    # @param [String] range Optional, define a specific range of commits
     # @return [Array<String>] log messages
-    def log_messages(first_parent = false)
+    def log_messages(first_parent = false, range = nil)
       walker = Rugged::Walker.new @repo
-      walker.push @repo.head.target_id
+      if range.nil?
+        walker.push @repo.head.target_id
+      else
+        begin
+          walker.push_range range
+        rescue Rugged::ReferenceError => e
+          raise Valr::NotValidRangeError.new range
+        end
+      end
       walker.simplify_first_parent if first_parent
       messages = walker.inject([]) { |messages, c| messages << c.message }
       walker.reset
