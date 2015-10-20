@@ -1,7 +1,7 @@
 Valr: Changelog generator based on git commit
 =============================================
 
-[![Build Status](https://travis-ci.org/eunomie/valr.svg?branch=master)](https://travis-ci.org/eunomie/valr)
+[![Build Status](https://travis-ci.org/eunomie/valr.svg?branch=master)](https://travis-ci.org/eunomie/valr) [![Gem Version](https://badge.fury.io/rb/valr.svg)](https://badge.fury.io/rb/valr)
 
 Installation
 ------------
