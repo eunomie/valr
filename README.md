@@ -32,29 +32,21 @@ and the list of changes in a markdown list.
 - A commit
 ```
 
-### Inside a git directory
-
 ```
-valr
-```
+Usage: valr [options] [repository]
 
-### Outside
+Range options:
+    -r, --range [RANGE]              display commits only for the RANGE
+    -f, --from [REV]                 display commits from REV to HEAD
 
-```
-valr <path-to-git-repository>
-```
+Filter:
+    -p, --first-parent               display only first-parent commits
 
-A range of commits can be defined to not display all the changes:
-
-```
-valr <path-to-git-repository> <range>
+Help:
+    -h, --help                       Show this message
 ```
 
-By example:
-
-```
-valr a_repository v0.1.0..v0.2.0
-```
+If `repository` is not defined, try with the current directory.
 
 Contributing
 ------------

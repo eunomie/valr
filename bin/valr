@@ -1,11 +1,14 @@
 #!/usr/bin/env ruby
 
 require 'valr'
+require 'valr/opt_parser'
 
-repo_path = ARGV[0] || Dir.pwd
-range = ARGV[1] || nil
+options = Valr::OptParser.parse ARGV
 
-changelog = Valr::Repo.new(repo_path).full_changelog first_parent: true, range: range
+repo_path = ARGV.pop || Dir.pwd
+
+
+changelog = Valr::Repo.new(repo_path).full_changelog options # first_parent: options[:first_parent], range: options[:range]
 
 puts "Changelog for #{repo_path}"
 puts ""
