@@ -90,6 +90,13 @@ describe Valr do
           expect(valr.changelog first_parent: true, range: 'HEAD~1..HEAD').to eq '- commit'
         end
       end
+
+      context 'when asked for commits in a branch' do
+        it 'returns messages of commits in the branch and parents' do
+          valr = Valr::Repo.new repo_path
+          expect(valr.changelog branch: 'feature').to eq "- feature commit 2\n- feature commit 1\n- first commit"
+        end
+      end
     end
   end
 
