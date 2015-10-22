@@ -90,9 +90,10 @@ module Valr
     # @param [Boolean] first_parent If true limits to first parent commits
     # @return [String] changelog
     def full_changelog_no_range(first_parent)
+      changelog_list = changelog first_parent: first_parent
       %{#{last_sha1}
 
-#{changelog(first_parent: first_parent)}}
+#{changelog_list}}
     end
 
     # Get the full changelog including metadata.
