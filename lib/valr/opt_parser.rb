@@ -22,6 +22,13 @@ module Valr
         end
 
         opts.separator ''
+        opts.separator 'Branch options:'
+
+        opts.on('-b', '--branch [BRANCH]', 'display commits for a specific BRANCH') do |branch|
+          options[:branch] = branch
+        end
+
+        opts.separator ''
         opts.separator 'Filter:'
 
         opts.on('-p', '--first-parent', 'display only first-parent commits') do |p|
