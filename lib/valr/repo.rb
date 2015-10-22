@@ -33,13 +33,15 @@ module Valr
     # @param [String] branch Optional, show commits in a branch
     # @return [String] changelog
     def full_changelog(first_parent: false, range: nil, branch: nil)
+      changelog_list = changelog first_parent: first_parent, range: range, branch: branch
       if !range.nil?
-        full_changelog_range first_parent, range
+        header = full_changelog_header_range range
       elsif !branch.nil?
-        full_changelog_branch first_parent, branch
+        header = full_changelog_header_branch branch
       else
-        full_changelog_no_range first_parent
+        header = full_changelog_header_no_range
       end
+      [header, "", changelog_list].join "\n"
     end
 
     private
@@ -86,43 +88,27 @@ module Valr
       messages
     end
 
-    # Get the full changelog including metadata.
-    # @param [Boolean] first_parent If true limits to first parent commits
-    # @return [String] changelog
-    def full_changelog_no_range(first_parent)
-      %{#{last_sha1}
-
-#{changelog(first_parent: first_parent)}}
+    # Get the header when no range
+    # @return [String] header no range
+    def full_changelog_header_no_range
+      @repo.head.target_id
     end
 
-    # Get the full changelog including metadata.
-    # @param [Boolean] first_parent If true limits to first parent commits
+    # Get the header when a range is defined
     # @param [String] range Define a specific range of commits
-    # @return [String] changelog
-    def full_changelog_range(first_parent, range)
-      changelog_list = changelog first_parent: first_parent, range: range
+    # @return [String] header with a range
+    def full_changelog_header_range(range)
       from, to = range.split '..'
       from_commit, to_commit = [from, to].map { |ref| rev_parse ref }
-      %{    from: #{from} <#{from_commit.oid}>
-    to:   #{to} <#{to_commit.oid}>
-
-#{changelog_list}}
+      ["    from: #{from} <#{from_commit.oid}>",
+       "    to:   #{to} <#{to_commit.oid}>"].join "\n"
     end
 
-    # Get the full changelog including metadata.
-    # @param [Boolean] first_parent If true limits to first parent commits
+    # Get the header when a branch is defined
     # @param [String] branch Show commits for a branch
-    # @return [String] changelog
-    def full_changelog_branch(first_parent, branch)
-      changelog_list = changelog branch: branch
-      %{    branch: #{branch} <#{@repo.references["refs/heads/#{branch}"].target_id}>
-
-#{changelog_list}}
-    end
-
-    # Get the last sha1 of a git repository
-    def last_sha1
-      @repo.head.target_id
+    # @return [String] header with a branch
+    def full_changelog_header_branch(branch)
+      "    branch: #{branch} <#{@repo.references["refs/heads/#{branch}"].target_id}>"
     end
 
     # Get the commit of a reference (tag or other)
