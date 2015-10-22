@@ -39,6 +39,9 @@ Range options:
     -r, --range [RANGE]              display commits only for the RANGE
     -f, --from [REV]                 display commits from REV to HEAD
 
+Branch options:
+    -b, --branch [BRANCH]            display commits for a specific BRANCH
+
 Filter:
     -p, --first-parent               display only first-parent commits
 
