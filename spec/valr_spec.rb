@@ -97,6 +97,11 @@ describe Valr do
           expect(valr.changelog branch: 'feature').to eq "- feature commit 2\n- feature commit 1\n- first commit"
         end
 
+        it 'returns messages of commits in the branch and from common ancestor' do
+          valr = Valr::Repo.new repo_path
+          expect(valr.changelog branch: 'feature', from_ancestor_with: 'master').to eq "- feature commit 2\n- feature commit 1"
+        end
+
         it 'returns an error if branch is not valid' do
           valr = Valr::Repo.new repo_path
           expect{valr.changelog branch: 'non_existing/branch'}.to raise_error Valr::NotValidBranchError, "'non_existing/branch' is not a valid branch"
@@ -214,10 +219,28 @@ describe Valr do
           expect(full_changelog.lines[0]).to match r_branch
         end
 
+        it 'returns metadata containg the branch and ancestor' do
+          valr = Valr::Repo.new repo_path
+          branch = 'feature'
+          ancestor_with = 'master'
+          full_changelog = valr.full_changelog branch: branch
+          r_branch = /^    branch: #{Regexp.escape branch} <[0-9a-f]{40}>\n/
+          r_ancestor = /^    from ancestor with: #{Regexp.escape ancestor_with} <[0-9a-f]{40}>\n/
+          expect(full_changelog.lines[0]).to match r_branch
+          expect(full_changelog.lines[1]).to match r_ancestor
+        end
+
         it 'returns a blank line followed by the changlog after the metadata' do
           valr = Valr::Repo.new repo_path
           branch = 'feature'
           expect(valr.full_changelog(branch: branch).lines[1..-1].join).to eq "\n#{valr.changelog branch: branch}"
+        end
+
+        it 'returns a blank line followed by the changlog from common ancestor after the metadata' do
+          valr = Valr::Repo.new repo_path
+          branch = 'feature'
+          ancestor_with = 'master'
+          expect(valr.full_changelog(branch: branch, from_ancestor_with: ancestor_with).lines[2..-1].join).to eq "\n#{valr.changelog branch: branch, from_ancestor_with: ancestor_with}"
         end
       end
 
