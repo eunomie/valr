@@ -22,22 +22,24 @@ module Valr
     # @param [Boolean] first_parent Optional, if true limits to first parent commits
     # @param [String] range Optional, define a specific range of commits
     # @param [String] branch Optional, show commits in a branch
+    # @param [String] from_ancestor_with Optional, from common ancestor with this branch
     # @return [String] changelog
-    def changelog(first_parent: false, range: nil, branch: nil)
-      to_list(first_lines(log_messages first_parent, range, branch))
+    def changelog(first_parent: false, range: nil, branch: nil, from_ancestor_with: nil)
+      to_list(first_lines(log_messages first_parent, range, branch, from_ancestor_with))
     end
 
     # Get the full changelog including metadata.
     # @param [Boolean] first_parent Optional, if true limits to first parent commits
     # @param [String] range Optional, define a specific range of commits
     # @param [String] branch Optional, show commits in a branch
+    # @param [String] from_ancestor_with Optional, from common ancestor with this branch
     # @return [String] changelog
-    def full_changelog(first_parent: false, range: nil, branch: nil)
-      changelog_list = changelog first_parent: first_parent, range: range, branch: branch
+    def full_changelog(first_parent: false, range: nil, branch: nil, from_ancestor_with: nil)
+      changelog_list = changelog first_parent: first_parent, range: range, branch: branch, from_ancestor_with: from_ancestor_with
       if !range.nil?
         header = full_changelog_header_range range
       elsif !branch.nil?
-        header = full_changelog_header_branch branch
+        header = full_changelog_header_branch branch, from_ancestor_with
       else
         header = full_changelog_header_no_range
       end
@@ -66,8 +68,9 @@ module Valr
     # @param [Boolean] first_parent Optional, if true limit to first parent commits
     # @param [String] range Optional, define a specific range of commits
     # @param [String] branch Optional, show commits in a branch
+    # @param [String] from_ancestor_with Optional, from common ancestor with this branch
     # @return [Array<String>] log messages
-    def log_messages(first_parent = false, range = nil, branch = nil)
+    def log_messages(first_parent = false, range = nil, branch = nil, from_ancestor_with = nil)
       walker = Rugged::Walker.new @repo
       if !range.nil?
         begin
@@ -78,14 +81,21 @@ module Valr
       elsif !branch.nil?
         b = @repo.references["refs/heads/#{branch}"]
         raise Valr::NotValidBranchError.new branch if b.nil?
-        walker.push b.target_id
+        if !from_ancestor_with.nil?
+          a = @repo.references["refs/heads/#{from_ancestor_with}"]
+          raise Valr::NotValidBranchError.new from_ancestor_with if a.nil?
+          base = @repo.merge_base b.target_id, a.target_id
+          walker.push_range "#{base}..#{b.target_id}"
+        else
+          walker.push b.target_id
+        end
       else
         walker.push @repo.head.target_id
       end
       walker.simplify_first_parent if first_parent
-      messages = walker.inject([]) { |messages, c| messages << c.message }
+      message_list = walker.inject([]) { |messages, c| messages << c.message }
       walker.reset
-      messages
+      message_list
     end
 
     # Get the header when no range
@@ -106,9 +116,12 @@ module Valr
 
     # Get the header when a branch is defined
     # @param [String] branch Show commits for a branch
+    # @param [String] ancestor Ancestor or nil
     # @return [String] header with a branch
-    def full_changelog_header_branch(branch)
-      "    branch: #{branch} <#{@repo.references["refs/heads/#{branch}"].target_id}>"
+    def full_changelog_header_branch(branch, ancestor)
+      h = ["    branch: #{branch} <#{@repo.references["refs/heads/#{branch}"].target_id}>"]
+      h << "    from ancestor with: #{ancestor} <#{@repo.references["refs/heads/#{ancestor}"].target_id}>" unless ancestor.nil?
+      h.join "\n"
     end
 
     # Get the commit of a reference (tag or other)
