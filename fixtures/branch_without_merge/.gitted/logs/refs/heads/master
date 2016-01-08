@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 c85250a95973312737a4587d8963d311fd411390 Yves Brissaud <yves@sogilis.com> 1444987375 +0200	commit (initial): first commit
+c85250a95973312737a4587d8963d311fd411390 1e2da5aa5c49d1d8a2750448c310aa3999eb2927 Yves Brissaud <yves@sogilis.com> 1444987402 +0200	merge @{-1}: Merge made by the 'recursive' strategy.
+1e2da5aa5c49d1d8a2750448c310aa3999eb2927 18efa23c1724ebc07304b6fd052632ccd8850980 Yves Brissaud <yves@sogilis.com> 1445072814 +0200	commit: commit
+18efa23c1724ebc07304b6fd052632ccd8850980 1e2da5aa5c49d1d8a2750448c310aa3999eb2927 Yves Brissaud <yves@sogilis.com> 1452288248 +0100	reset: moving to HEAD^
+1e2da5aa5c49d1d8a2750448c310aa3999eb2927 c85250a95973312737a4587d8963d311fd411390 Yves Brissaud <yves@sogilis.com> 1452288252 +0100	reset: moving to HEAD^
+c85250a95973312737a4587d8963d311fd411390 fac7eb9dd6337904420ebe542cd1de975a43796d Yves Brissaud <yves@sogilis.com> 1452288271 +0100	commit: master commit 1
+fac7eb9dd6337904420ebe542cd1de975a43796d a860fb9939edca39bc8d0c238a63abb4856a81a9 Yves Brissaud <yves@sogilis.com> 1452288274 +0100	commit: master commit 2
