@@ -6,6 +6,8 @@ module Valr
       options = {}
       options[:range] = nil
       options[:first_parent] = false
+      options[:branch] = nil
+      options[:from_ancestor_with] = nil
 
       opt_parser = OptionParser.new do |opts|
         opts.banner = "Usage: valr [options] [repository]"
@@ -27,6 +29,10 @@ module Valr
         opts.on('-b', '--branch [BRANCH]', 'display commits for a specific BRANCH') do |branch|
           options[:branch] = branch
         end
+
+	opts.on('--from-ancestor-with [ANCESTOR]', 'display commits from an ancestor with a branch') do |ancestor|
+          options[:from_ancestor_with] = ancestor
+	end
 
         opts.separator ''
         opts.separator 'Filter:'
