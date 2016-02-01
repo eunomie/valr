@@ -1,7 +1,7 @@
 require 'valr'
 
 describe Valr do
-  after(:each) do
+  before(:each) do
     clear_fixtures
   end
 

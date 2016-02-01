@@ -1,11 +1,19 @@
-Given(/^a repository$/) do
-  pending # Write code here that turns the phrase above into concrete actions
+Before do
+  clear_fixtures
+end
+
+Given(/^a simple repository$/) do
+  clear_fixtures
+  create_simple_fixtures
 end
 
 When(/^ask for the changelog$/) do
-  pending # Write code here that turns the phrase above into concrete actions
+  @changelog = Valr::Repo.new(repo_path).changelog
 end
 
 Then(/^returns all commit messages$/) do
-  pending # Write code here that turns the phrase above into concrete actions
+  @changelog.lines.size.should eq 3
+  @changelog.should eq "- 3rd commit
+- 2nd commit
+- first commit"
 end
