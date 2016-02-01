@@ -1,4 +1,4 @@
-require_relative './git_helpers'
+require_relative '../test_helpers/git_helpers'
 require 'simplecov'
 SimpleCov.start
 
