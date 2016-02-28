@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     valr (0.1.0)
+      koios (~> 0.2.0)
       rugged (~> 0.23.2)
 
 GEM
@@ -44,6 +45,7 @@ GEM
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
     json (1.8.3)
+    koios (0.2.0)
     listen (3.0.3)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
@@ -96,3 +98,6 @@ DEPENDENCIES
   rspec (~> 3.3, >= 3.3.0)
   simplecov (~> 0.10, >= 0.10.0)
   valr!
+
+BUNDLED WITH
+   1.11.2
