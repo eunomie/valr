@@ -1,4 +1,5 @@
 require 'rugged'
+require 'koios'
 require 'valr/repository_error'
 require 'valr/empty_repository_error'
 require 'valr/not_valid_range_error'
@@ -12,7 +13,7 @@ module Valr
       @repo_path = repo_path
       begin
         @repo = Rugged::Repository.new @repo_path
-      rescue Rugged::RepositoryError => e
+      rescue Rugged::RepositoryError
         raise Valr::RepositoryError.new @repo_path
       end
       raise Valr::EmptyRepositoryError.new @repo_path if @repo.empty?
@@ -43,7 +44,7 @@ module Valr
       else
         header = full_changelog_header_no_range
       end
-      [header, "", changelog_list].join "\n"
+      [header, changelog_list].join "\n"
     end
 
     private
@@ -52,7 +53,9 @@ module Valr
     # @param [Array<String>] items
     # @return [String] markdown list
     def to_list(items)
-      (items.map {|item| "- #{item}"}).join("\n")
+      Koios::Doc.write {
+        [ul(items)]
+      }
     end
 
     # Extract only first lines
@@ -75,7 +78,7 @@ module Valr
       if !range.nil?
         begin
           walker.push_range range
-        rescue Rugged::ReferenceError => e
+        rescue Rugged::ReferenceError
           raise Valr::NotValidRangeError.new range
         end
       elsif !branch.nil?
@@ -101,7 +104,8 @@ module Valr
     # Get the header when no range
     # @return [String] header no range
     def full_changelog_header_no_range
-      @repo.head.target_id
+      id = @repo.head.target_id
+      Koios::Doc.write { [id.pre] }
     end
 
     # Get the header when a range is defined
@@ -110,8 +114,10 @@ module Valr
     def full_changelog_header_range(range)
       from, to = range.split '..'
       from_commit, to_commit = [from, to].map { |ref| rev_parse ref }
-      ["    from: #{from} <#{from_commit.oid}>",
-       "    to:   #{to} <#{to_commit.oid}>"].join "\n"
+      Koios::Doc.write {
+        [pre(["from: #{from} <#{from_commit.oid}>",
+              "to:   #{to} <#{to_commit.oid}>"])]
+      }
     end
 
     # Get the header when a branch is defined
@@ -119,9 +125,9 @@ module Valr
     # @param [String] ancestor Ancestor or nil
     # @return [String] header with a branch
     def full_changelog_header_branch(branch, ancestor)
-      h = ["    branch: #{branch} <#{@repo.references["refs/heads/#{branch}"].target_id}>"]
-      h << "    from ancestor with: #{ancestor} <#{@repo.references["refs/heads/#{ancestor}"].target_id}>" unless ancestor.nil?
-      h.join "\n"
+      h = ["branch: #{branch} <#{@repo.references["refs/heads/#{branch}"].target_id}>"]
+      h << "from ancestor with: #{ancestor} <#{@repo.references["refs/heads/#{ancestor}"].target_id}>" unless ancestor.nil?
+      Koios::Doc.write {[pre(h)]}
     end
 
     # Get the commit of a reference (tag or other)

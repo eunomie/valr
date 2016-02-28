@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'cucumber', '~> 2.3', '>= 2.3.2'
   s.add_development_dependency 'guard-cucumber', '~> 2.0'
   s.add_dependency 'rugged', '~> 0.23.2'
+  s.add_dependency 'koios', '~> 0.2.0'
 end
