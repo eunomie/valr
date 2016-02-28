@@ -175,12 +175,12 @@ describe Valr do
       context 'without range' do
         it 'returns the sha1 of the commit as a context of the changelog' do
           valr = Valr::Repo.new repo_path
-          expect(valr.full_changelog.lines.first.chomp).to match(/^[0-9a-f]{40}$/)
+          expect(valr.full_changelog.lines.first.chomp).to match(/^    [0-9a-f]{40}$/)
         end
 
         it 'returns a blank line followed by the changlog after the metadata' do
           valr = Valr::Repo.new repo_path
-          expect(valr.full_changelog.lines[1..-1].join).to eq valr.changelog
+          expect(valr.full_changelog.lines[1..-1].join).to eq "\n#{valr.changelog}"
         end
       end
 
@@ -218,24 +218,24 @@ describe Valr do
         context 'when asked for all commits' do
           it 'returns the sha1 of the commit as a context of the changelog' do
             valr = Valr::Repo.new repo_path
-            expect(valr.full_changelog.lines.first.chomp).to match(/^[0-9a-f]{40}$/)
+            expect(valr.full_changelog.lines.first.chomp).to match(/^    [0-9a-f]{40}$/)
           end
 
           it 'returns a blank line followed by the changlog after the metadata' do
             valr = Valr::Repo.new repo_path
-            expect(valr.full_changelog.lines[1..-1].join).to eq valr.changelog
+            expect(valr.full_changelog.lines[1..-1].join).to eq "\n#{valr.changelog}"
           end
         end
 
         context 'when asked for first parent commits' do
           it 'returns the sha1 of the commit as a context of the changelog' do
             valr = Valr::Repo.new repo_path
-            expect(valr.full_changelog(first_parent: true).lines.first.chomp).to match(/^[0-9a-f]{40}$/)
+            expect(valr.full_changelog(first_parent: true).lines.first.chomp).to match(/^    [0-9a-f]{40}$/)
           end
 
           it 'returns a blank line followed by the changlog after the metadata' do
             valr = Valr::Repo.new repo_path
-            expect(valr.full_changelog(first_parent: true).lines[1..-1].join).to eq valr.changelog(first_parent: true)
+            expect(valr.full_changelog(first_parent: true).lines[1..-1].join).to eq "\n#{valr.changelog(first_parent: true)}"
           end
         end
       end

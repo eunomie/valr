@@ -104,7 +104,8 @@ module Valr
     # Get the header when no range
     # @return [String] header no range
     def full_changelog_header_no_range
-      @repo.head.target_id
+      id = @repo.head.target_id
+      Koios::Doc.write { [id.pre] }
     end
 
     # Get the header when a range is defined
