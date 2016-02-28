@@ -12,7 +12,7 @@ module Valr
       @repo_path = repo_path
       begin
         @repo = Rugged::Repository.new @repo_path
-      rescue Rugged::RepositoryError => e
+      rescue Rugged::RepositoryError
         raise Valr::RepositoryError.new @repo_path
       end
       raise Valr::EmptyRepositoryError.new @repo_path if @repo.empty?
@@ -75,7 +75,7 @@ module Valr
       if !range.nil?
         begin
           walker.push_range range
-        rescue Rugged::ReferenceError => e
+        rescue Rugged::ReferenceError
           raise Valr::NotValidRangeError.new range
         end
       elsif !branch.nil?
