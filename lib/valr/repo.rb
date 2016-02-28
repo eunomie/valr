@@ -1,4 +1,5 @@
 require 'rugged'
+require 'koios'
 require 'valr/repository_error'
 require 'valr/empty_repository_error'
 require 'valr/not_valid_range_error'
@@ -52,7 +53,9 @@ module Valr
     # @param [Array<String>] items
     # @return [String] markdown list
     def to_list(items)
-      (items.map {|item| "- #{item}"}).join("\n")
+      Koios::Doc.write {
+        [ul(items)]
+      }
     end
 
     # Extract only first lines

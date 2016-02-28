@@ -45,13 +45,20 @@ describe Valr do
 
       it 'returns the first line of each commit messages in a markdown list' do
         valr = Valr::Repo.new repo_path
-        expect(valr.changelog).to eq "- 3rd commit\n- 2nd commit\n- first commit"
+        expect(valr.changelog).to eq Koios::Doc.write {
+          [ul(["3rd commit",
+               "2nd commit",
+               "first commit"])]
+        }
       end
 
       context 'when asked for a commit range' do
         it 'returns only the messages of commits in the range' do
           valr = Valr::Repo.new repo_path
-          expect(valr.changelog range: 'HEAD~2..HEAD').to eq ["- 3rd commit", "- 2nd commit"].join "\n"
+          expect(valr.changelog range: 'HEAD~2..HEAD').to eq Koios::Doc.write {
+          [ul(["3rd commit",
+               "2nd commit"])]
+        }
         end
 
         it 'returns an error if range is not valid' do
@@ -69,32 +76,54 @@ describe Valr do
       context 'when asked for all commits' do
         it 'returns first line of each commit messages in a markdown list' do
           valr = Valr::Repo.new repo_path
-          expect(valr.changelog).to eq "- commit\n- merge commit\n- feature commit 2\n- feature commit 1\n- first commit"
+          expect(valr.changelog).to eq Koios::Doc.write {
+            [ul(["commit",
+                 "merge commit",
+                 "feature commit 2",
+                 "feature commit 1",
+                 "first commit"])]
+          }
         end
 
         it 'returns first line of each commit messages including in the range' do
           valr = Valr::Repo.new repo_path
-          expect(valr.changelog range: 'c85250a..HEAD').to eq "- commit\n- merge commit\n- feature commit 2\n- feature commit 1"
+          expect(valr.changelog range: 'c85250a..HEAD').to eq Koios::Doc.write {
+            [ul(["commit",
+                 "merge commit",
+                 "feature commit 2",
+                 "feature commit 1"])]
+          }
         end
       end
 
       context 'when asked for first parent commits' do
         it 'returns only messages for commits written in the branch' do
           valr = Valr::Repo.new repo_path
-          expect(valr.changelog first_parent: true).to eq "- commit\n- merge commit\n- first commit"
+          expect(valr.changelog first_parent: true).to eq Koios::Doc.write {
+            [ul(["commit",
+                 "merge commit",
+                 "first commit"])]
+          }
         end
 
         it 'returns only messages for commits written in the branch and in the range' do
           valr = Valr::Repo.new repo_path
-          expect(valr.changelog first_parent: true, range: 'HEAD^^..HEAD').to eq ['- commit', '- merge commit'].join "\n"
-          expect(valr.changelog first_parent: true, range: 'HEAD~1..HEAD').to eq '- commit'
+          expect(valr.changelog first_parent: true, range: 'HEAD^^..HEAD').to eq Koios::Doc.write {
+            [ul(['commit',
+                 'merge commit'])]
+          }
+          expect(valr.changelog first_parent: true, range: 'HEAD~1..HEAD').to eq Koios::Doc.write {[ul(['commit'])]}
         end
       end
 
       context 'when asked for commits in a branch' do
         it 'returns messages of commits in the branch and parents' do
           valr = Valr::Repo.new repo_path
-          expect(valr.changelog branch: 'feature').to eq "- feature commit 2\n- feature commit 1\n- first commit"
+          expect(valr.changelog branch: 'feature').to eq Koios::Doc.write {
+            [ul(["feature commit 2",
+                 "feature commit 1",
+                 "first commit"])]
+          }
         end
 
         it 'returns an error if branch is not valid' do
@@ -106,7 +135,12 @@ describe Valr do
       context 'when asked for range and branch' do
         it 'range is prioritary in front of branch' do
           valr = Valr::Repo.new repo_path
-          expect(valr.changelog range: 'c85250a..HEAD', branch: 'feature').to eq "- commit\n- merge commit\n- feature commit 2\n- feature commit 1"
+          expect(valr.changelog range: 'c85250a..HEAD', branch: 'feature').to eq Koios::Doc.write {
+            [ul(["commit",
+                 "merge commit",
+                 "feature commit 2",
+                 "feature commit 1"])]
+          }
         end
       end
     end
@@ -119,8 +153,14 @@ describe Valr do
       context 'when asked for commits in a branch' do
         it 'returns messages of commits in the branch and from common ancestor' do
           valr = Valr::Repo.new repo_path
-          expect(valr.changelog branch: 'feature', from_ancestor_with: 'master').to eq "- feature commit 2\n- feature commit 1"
-          expect(valr.changelog branch: 'master', from_ancestor_with: 'feature').to eq "- master commit 2\n- master commit 1"
+          expect(valr.changelog branch: 'feature', from_ancestor_with: 'master').to eq Koios::Doc.write {
+            [ul(["feature commit 2",
+                 "feature commit 1"])]
+          }
+          expect(valr.changelog branch: 'master', from_ancestor_with: 'feature').to eq Koios::Doc.write {
+            [ul(["master commit 2",
+                 "master commit 1"])]
+          }
         end
       end
     end
@@ -135,7 +175,7 @@ describe Valr do
       context 'without range' do
         it 'returns the sha1 of the commit as a context of the changelog' do
           valr = Valr::Repo.new repo_path
-          expect(valr.full_changelog.lines.first.chomp).to match /^[0-9a-f]{40}$/
+          expect(valr.full_changelog.lines.first.chomp).to match(/^[0-9a-f]{40}$/)
         end
 
         it 'returns a blank line followed by the changlog after the metadata' do
@@ -178,7 +218,7 @@ describe Valr do
         context 'when asked for all commits' do
           it 'returns the sha1 of the commit as a context of the changelog' do
             valr = Valr::Repo.new repo_path
-            expect(valr.full_changelog.lines.first.chomp).to match /^[0-9a-f]{40}$/
+            expect(valr.full_changelog.lines.first.chomp).to match(/^[0-9a-f]{40}$/)
           end
 
           it 'returns a blank line followed by the changlog after the metadata' do
@@ -190,7 +230,7 @@ describe Valr do
         context 'when asked for first parent commits' do
           it 'returns the sha1 of the commit as a context of the changelog' do
             valr = Valr::Repo.new repo_path
-            expect(valr.full_changelog(first_parent: true).lines.first.chomp).to match /^[0-9a-f]{40}$/
+            expect(valr.full_changelog(first_parent: true).lines.first.chomp).to match(/^[0-9a-f]{40}$/)
           end
 
           it 'returns a blank line followed by the changlog after the metadata' do
