@@ -180,7 +180,7 @@ describe Valr do
 
         it 'returns a blank line followed by the changlog after the metadata' do
           valr = Valr::Repo.new repo_path
-          expect(valr.full_changelog.lines[1..-1].join).to eq "\n#{valr.changelog}"
+          expect(valr.full_changelog.lines[1..-1].join).to eq valr.changelog
         end
       end
 
@@ -223,7 +223,7 @@ describe Valr do
 
           it 'returns a blank line followed by the changlog after the metadata' do
             valr = Valr::Repo.new repo_path
-            expect(valr.full_changelog.lines[1..-1].join).to eq "\n#{valr.changelog}"
+            expect(valr.full_changelog.lines[1..-1].join).to eq valr.changelog
           end
         end
 
@@ -235,7 +235,7 @@ describe Valr do
 
           it 'returns a blank line followed by the changlog after the metadata' do
             valr = Valr::Repo.new repo_path
-            expect(valr.full_changelog(first_parent: true).lines[1..-1].join).to eq "\n#{valr.changelog first_parent: true}"
+            expect(valr.full_changelog(first_parent: true).lines[1..-1].join).to eq valr.changelog(first_parent: true)
           end
         end
       end

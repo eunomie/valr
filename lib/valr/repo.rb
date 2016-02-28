@@ -44,7 +44,7 @@ module Valr
       else
         header = full_changelog_header_no_range
       end
-      [header, "", changelog_list].join "\n"
+      [header, changelog_list].join "\n"
     end
 
     private
@@ -113,8 +113,10 @@ module Valr
     def full_changelog_header_range(range)
       from, to = range.split '..'
       from_commit, to_commit = [from, to].map { |ref| rev_parse ref }
-      ["    from: #{from} <#{from_commit.oid}>",
-       "    to:   #{to} <#{to_commit.oid}>"].join "\n"
+      Koios::Doc.write {
+        [pre(["from: #{from} <#{from_commit.oid}>",
+              "to:   #{to} <#{to_commit.oid}>"])]
+      }
     end
 
     # Get the header when a branch is defined
@@ -122,9 +124,9 @@ module Valr
     # @param [String] ancestor Ancestor or nil
     # @return [String] header with a branch
     def full_changelog_header_branch(branch, ancestor)
-      h = ["    branch: #{branch} <#{@repo.references["refs/heads/#{branch}"].target_id}>"]
-      h << "    from ancestor with: #{ancestor} <#{@repo.references["refs/heads/#{ancestor}"].target_id}>" unless ancestor.nil?
-      h.join "\n"
+      h = ["branch: #{branch} <#{@repo.references["refs/heads/#{branch}"].target_id}>"]
+      h << "from ancestor with: #{ancestor} <#{@repo.references["refs/heads/#{ancestor}"].target_id}>" unless ancestor.nil?
+      Koios::Doc.write {[pre(h)]}
     end
 
     # Get the commit of a reference (tag or other)
